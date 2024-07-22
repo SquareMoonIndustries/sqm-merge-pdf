@@ -1,3 +1,9 @@
-# template-service
+# sqm-merge-pdf
 
-Simple service template for use in my project, remember to change const in main.go
+Simple service that merges pdf
+
+## Installation
+sqm-merge-pdf -service install
+
+## Uninstallation
+sqm-merge-pdf -service uninstall
