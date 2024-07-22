@@ -14,6 +14,13 @@ func init() {
 	routes = append(routes, Route{"mergeHandler", "POST", "/merge", mergeHandler})
 }
 
+// mergeHandler is an HTTP handler function that handles the merging of PDF files.
+// It expects a secret header to be provided in the request, and if the secret does not match the configured secret,
+// it returns a forbidden error. Otherwise, it parses the multipart form data from the request,
+// extracts the PDF form field array, and merges the PDF files into a single PDF file.
+// The merged PDF file is then written to the response writer.
+// If the 'filename' form field is provided, it uses that as the filename for the merged PDF file,
+// otherwise it uses a default filename of 'tmp.pdf'.
 func mergeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("secret") != settings.Secret {
 		http.Error(w, "Security lockdown sector 4", http.StatusForbidden)
@@ -39,6 +46,16 @@ func mergeHandler(w http.ResponseWriter, r *http.Request) {
 	handleMultipartFormData(multipartFormData, w, filename)
 }
 
+// handleMultipartFormData handles the multipart form data containing PDF files.
+// It reads the files, validates their content type, and merges them into a single PDF file.
+// The merged PDF file is then written to the http.ResponseWriter.
+//
+// Parameters:
+// - multipartFormData: The multipart form data containing the PDF files.
+// - w: The http.ResponseWriter to write the merged PDF file to.
+// - filename: The name of the merged PDF file.
+//
+// Returns: None.
 func handleMultipartFormData(multipartFormData *multipart.Form, w http.ResponseWriter, filename string) {
 	// Create a slice to store io.ReadSeeker instances
 	var fileReaders []io.ReadSeeker
