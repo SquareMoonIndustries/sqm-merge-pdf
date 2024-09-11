@@ -9,9 +9,13 @@ import (
 )
 
 type appSettings struct {
-	Debug  bool   `json:"debug"`
-	Port   string `json:"port"`
-	Secret string `json:"secret"`
+	Debug     bool   `json:"debug"`
+	Port      string `json:"port"`
+	MysqlHost string `json:"mysql_host"`
+	MysqlPort string `json:"mysql_port"`
+	MysqlUser string `json:"mysql_user"`
+	MysqlPass string `json:"mysql_pass"`
+	MysqlDB   string `json:"mysql_db"`
 }
 
 const filenameSettings = "settings.json"

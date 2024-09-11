@@ -1,11 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/kardianos/service"
 )
@@ -15,12 +17,15 @@ const (
 	nameOfService = "sqm-merge-pdf-service"
 )
 
+var db *sql.DB
+
 var (
 	routes = Routes{
 		Route{
 			"Index",
 			"GET",
 			"/",
+			false,
 			defaultHandler,
 		},
 	}
