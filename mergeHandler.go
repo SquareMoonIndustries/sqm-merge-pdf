@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	routes = append(routes, Route{"mergeHandler", "POST", "/pdfmerge", false, mergeHandler})
+	routes = append(routes, Route{"mergeHandler", "POST", "/pdfmerge", true, mergeHandler})
 }
 
 // mergeHandler is an HTTP handler function that handles the merging of PDF files.

@@ -28,6 +28,13 @@ var (
 			false,
 			defaultHandler,
 		},
+		Route{
+			"Health",
+			"GET",
+			"/pdfmerge",
+			false,
+			defaultHandler,
+		},
 	}
 	router *mux.Router
 )
@@ -52,6 +59,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db, err = sql.Open("mysql", settings.MysqlUser+":"+settings.MysqlPass+"@tcp("+settings.MysqlHost+":3306)/"+settings.MysqlDB+"?parseTime=true")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
 	go func() {
 		for {
