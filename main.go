@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	appVersionStr = "v0.1"
+	appVersionStr = "v0.2"
 	nameOfService = "sqm-merge-pdf-service"
 )
 

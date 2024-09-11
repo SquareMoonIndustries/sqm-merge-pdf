@@ -4,7 +4,7 @@
 
 GHACCOUNT := johansundell
 NAME := sqm-merge-pdf
-VERSION := v0.1
+VERSION := v0.2
 
 build:
 	go build -ldflags "-X main.Version=$(VERSION)"
