@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Route struct for the service
@@ -12,6 +13,7 @@ type Route struct {
 	Method      string
 	Pattern     string
 	HandlerFunc http.HandlerFunc
+	UseAuth     bool
 }
 
 // Routes for the servcie web handlers
@@ -24,6 +26,9 @@ func NewRouter() *mux.Router {
 		var handler http.Handler
 		handler = route.HandlerFunc
 		handler = wwwLogger(handler, route.Name)
+		if route.UseAuth {
+			handler = authHandler(handler, route.Name)
+		}
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).
@@ -31,6 +36,35 @@ func NewRouter() *mux.Router {
 			Handler(handler)
 	}
 	return router
+}
+
+func authHandler(inner http.Handler, name string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		username, password, ok := r.BasicAuth()
+		if ok {
+			//fmt.Println(username, password)
+			hashPassword, user_id := "", 0
+			if err := db.QueryRow("SELECT id, password FROM users WHERE username = ?", username).Scan(&user_id, &hashPassword); err != nil {
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				logger.Error(err)
+				//fmt.Println("Error: ", err)
+				return
+			}
+			//fmt.Println(user_id)
+			_ = user_id
+			//fmt.Println(hashPassword)
+
+			// Add subtle.ConstantTimeCompare protection
+			err := bcrypt.CompareHashAndPassword([]byte(hashPassword), []byte(password))
+			if err == nil {
+				inner.ServeHTTP(w, r)
+				return
+			}
+		}
+
+		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	})
 }
 
 func wwwLogger(inner http.Handler, name string) http.Handler {

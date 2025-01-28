@@ -1,19 +1,23 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/kardianos/service"
 )
 
 const (
-	appVersionStr = "v0.1"
+	appVersionStr = "v1.0.1"
 	nameOfService = "sqm-merge-pdf-service"
 )
+
+var db *sql.DB
 
 var (
 	routes = Routes{
@@ -22,6 +26,14 @@ var (
 			"GET",
 			"/",
 			defaultHandler,
+			false,
+		},
+		Route{
+			"Index",
+			"GET",
+			"/mergepdf",
+			defaultHandler,
+			false,
 		},
 	}
 	router *mux.Router
@@ -47,6 +59,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db, err = sql.Open("mysql", settings.MysqlUser+":"+settings.MysqlPass+"@tcp("+settings.MysqlHost+":3306)/"+settings.MysqlDB+"?parseTime=true")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
 	go func() {
 		for {

@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	routes = append(routes, Route{"mergeHandler", "POST", "/merge", mergeHandler})
+	routes = append(routes, Route{"mergeHandler", "POST", "/mergepdf", mergeHandler, true})
 }
 
 // mergeHandler is an HTTP handler function that handles the merging of PDF files.
@@ -22,11 +22,11 @@ func init() {
 // If the 'filename' form field is provided, it uses that as the filename for the merged PDF file,
 // otherwise it uses a default filename of 'tmp.pdf'.
 func mergeHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Header.Get("secret") != settings.Secret {
+	/*if r.Header.Get("secret") != settings.Secret {
 		http.Error(w, "Security lockdown sector 4", http.StatusForbidden)
 		logger.Info("forbidden")
 		return
-	}
+	}*/
 
 	// Parse the multipart form data
 	// 32Mb in memory
